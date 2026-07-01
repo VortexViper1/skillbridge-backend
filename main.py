@@ -45,19 +45,55 @@ def calculate_ats_score(text):
     text = text.lower()
 
     skills = {
-        "python": 15,
-        "java": 15,
-        "sql": 10,
-        "html": 5,
-        "css": 5,
-        "javascript": 10,
-        "react": 15,
-        "fastapi": 15,
-        "mysql": 10,
-        "git": 10,
-        "docker": 15,
-        "aws": 20
-    }
+    # Programming
+    "python": 10,
+    "java": 10,
+    "c": 8,
+    "c++": 8,
+    "javascript": 8,
+    "typescript": 8,
+
+    # Web
+    "html": 5,
+    "css": 5,
+    "react": 10,
+    "node.js": 10,
+    "express": 8,
+
+    # Database
+    "mysql": 8,
+    "postgresql": 8,
+    "mongodb": 8,
+    "sql": 8,
+
+    # AI
+    "machine learning": 10,
+    "deep learning": 10,
+    "tensorflow": 10,
+    "pytorch": 10,
+
+    # Cybersecurity
+    "wireshark": 10,
+    "burp suite": 10,
+    "ghidra": 10,
+    "ida": 10,
+    "digital forensics": 10,
+    "nmap": 10,
+    "metasploit": 10,
+    "kali": 10,
+
+    # Cloud
+    "aws": 10,
+    "azure": 10,
+    "docker": 10,
+    "kubernetes": 10,
+
+    # Tools
+    "git": 5,
+    "github": 5,
+    "fastapi": 10,
+    "flask": 8
+}
 
     score = 0
     found_skills = []
