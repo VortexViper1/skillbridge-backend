@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+frontend/
+*.pyc
+.env
+skillbridge.db
+uploads/
