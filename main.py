@@ -253,12 +253,12 @@ async def upload_resume(file: UploadFile = File(...)):
 
         if page_text:
             text += page_text
-
+    import re
+    text = re.sub(r'(?<=\w)\s+(?=\w)', '', text)
     latest_resume_text = text
 
     score, skills = calculate_ats_score(text)
-
-    job_matches = calculate_job_match(skills)
+    
 
     analysis = analyze_resume(text)
 
