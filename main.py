@@ -295,9 +295,7 @@ async def upload_resume(file: UploadFile = File(...)):
             analysis["recommended_projects"],
 
         "interview_questions":
-            analysis["interview_questions"],
-
-        "job_matches": job_matches
+            analysis["interview_questions"]
     }
 
 
