@@ -210,17 +210,23 @@ def login(user: UserLogin):
     db = SessionLocal()
 
     existing_user = db.query(User).filter(
-        User.email == user.email,
-        User.password == user.password
+        User.email == user.email
     ).first()
+
+    if existing_user:
+        print("User found:", existing_user.email)
+        print("Stored password:", existing_user.password)
+        print("Entered password:", user.password)
+    else:
+        print("User NOT found")
 
     db.close()
 
     if not existing_user:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid Email or Password"
-        )
+        raise HTTPException(status_code=401, detail="Email not found")
+
+    if existing_user.password != user.password:
+        raise HTTPException(status_code=401, detail="Wrong password")
 
     return {
         "message": "Login Successful",
