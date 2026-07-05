@@ -40,71 +40,261 @@ def home():
     }
 
 
+import re
+
 def calculate_ats_score(text):
 
     text = text.lower()
 
-    skills = {
-    # Programming
-    "python": 10,
-    "java": 10,
-    "c": 8,
-    "c++": 8,
-    "javascript": 8,
-    "typescript": 8,
-
-    # Web
-    "html": 5,
-    "css": 5,
-    "react": 10,
-    "node.js": 10,
-    "express": 8,
-
-    # Database
-    "mysql": 8,
-    "postgresql": 8,
-    "mongodb": 8,
-    "sql": 8,
-
-    # AI
-    "machine learning": 10,
-    "deep learning": 10,
-    "tensorflow": 10,
-    "pytorch": 10,
-
-    # Cybersecurity
-    "wireshark": 10,
-    "burp suite": 10,
-    "ghidra": 10,
-    "ida": 10,
-    "digital forensics": 10,
-    "nmap": 10,
-    "metasploit": 10,
-    "kali": 10,
-
-    # Cloud
-    "aws": 10,
-    "azure": 10,
-    "docker": 10,
-    "kubernetes": 10,
-
-    # Tools
-    "git": 5,
-    "github": 5,
-    "fastapi": 10,
-    "flask": 8
-}
-
     score = 0
+
     found_skills = []
 
-    for skill, points in skills.items():
+    # -----------------------------
+    # 1. CONTACT DETAILS (10)
+    # -----------------------------
 
-        if skill in text:
-            score += points
-            found_skills.append(skill)
+    if re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", text):
+        score += 2
 
-    score = min(score, 100)
+    if re.search(r"\+?\d[\d\s\-]{8,}", text):
+        score += 2
+
+    if "linkedin" in text:
+        score += 2
+
+    if "github" in text:
+        score += 2
+
+    if any(x in text for x in ["india", "hyderabad", "bangalore", "chennai", "mumbai", "address"]):
+        score += 2
+
+    # -----------------------------
+    # 2. RESUME SECTIONS (15)
+    # -----------------------------
+
+    sections = {
+        "education": 3,
+        "skills": 3,
+        "projects": 3,
+        "experience": 3,
+        "certifications": 3
+    }
+
+    for section, pts in sections.items():
+        if section in text:
+            score += pts
+
+    # -----------------------------
+    # 3. TECHNICAL SKILLS (25)
+    # -----------------------------
+
+    skill_categories = {
+
+        "Programming": [
+            "python","java","c++","c","javascript","typescript"
+        ],
+
+        "Frontend":[
+            "html","css","react","angular","vue"
+        ],
+
+        "Backend":[
+            "fastapi","flask","django","node.js","express"
+        ],
+
+        "Database":[
+            "mysql","postgresql","mongodb","sqlite","sql"
+        ],
+
+        "Cloud":[
+            "aws","azure","docker","kubernetes","gcp"
+        ],
+
+        "Cybersecurity":[
+            "kali",
+            "wireshark",
+            "burp suite",
+            "metasploit",
+            "nmap",
+            "ghidra",
+            "ida",
+            "digital forensics",
+            "volatility",
+            "autopsy",
+            "yara"
+        ],
+
+        "AI":[
+            "machine learning",
+            "deep learning",
+            "tensorflow",
+            "pytorch",
+            "opencv",
+            "scikit-learn",
+            "numpy",
+            "pandas"
+        ]
+    }
+
+    total_skills = 0
+
+    for category in skill_categories.values():
+
+        for skill in category:
+
+            if skill in text and skill not in found_skills:
+
+                found_skills.append(skill)
+
+                total_skills += 1
+
+    if total_skills >= 20:
+        score += 25
+    elif total_skills >= 15:
+        score += 20
+    elif total_skills >= 10:
+        score += 15
+    elif total_skills >= 5:
+        score += 10
+    elif total_skills >= 1:
+        score += 5
+
+    # -----------------------------
+    # 4. EXPERIENCE / PROJECTS (20)
+    # -----------------------------
+
+    experience_keywords = [
+        "intern",
+        "internship",
+        "project",
+        "experience",
+        "developer",
+        "engineer",
+        "research"
+    ]
+
+    action_verbs = [
+        "developed",
+        "built",
+        "implemented",
+        "designed",
+        "created",
+        "optimized",
+        "integrated",
+        "deployed",
+        "automated",
+        "analyzed"
+    ]
+
+    exp_score = 0
+
+    if any(word in text for word in experience_keywords):
+        exp_score += 10
+
+    verb_count = 0
+
+    for verb in action_verbs:
+        verb_count += text.count(verb)
+
+    if verb_count >= 8:
+        exp_score += 5
+    elif verb_count >= 4:
+        exp_score += 3
+    elif verb_count >= 1:
+        exp_score += 2
+
+    numbers = len(re.findall(r"\d+%|\d+\+|\d+", text))
+
+    if numbers >= 5:
+        exp_score += 5
+    elif numbers >= 2:
+        exp_score += 3
+
+    score += min(exp_score,20)
+
+    # -----------------------------
+    # 5. EDUCATION (10)
+    # -----------------------------
+
+    education_words = [
+        "b.tech",
+        "btech",
+        "bachelor",
+        "university",
+        "college",
+        "cgpa",
+        "gpa",
+        "graduation"
+    ]
+
+    edu_found = 0
+
+    for word in education_words:
+
+        if word in text:
+            edu_found += 1
+
+    if edu_found >= 4:
+        score += 10
+    elif edu_found >= 2:
+        score += 7
+    elif edu_found >= 1:
+        score += 4
+
+    # -----------------------------
+    # 6. ACTION VERBS (10)
+    # -----------------------------
+
+    if verb_count >= 10:
+        score += 10
+    elif verb_count >= 7:
+        score += 8
+    elif verb_count >= 4:
+        score += 5
+    elif verb_count >= 2:
+        score += 3
+
+    # -----------------------------
+    # 7. WORD COUNT (10)
+    # -----------------------------
+
+    words = len(text.split())
+
+    if 350 <= words <= 900:
+        score += 10
+    elif 250 <= words < 350:
+        score += 8
+    elif 900 < words <= 1200:
+        score += 7
+    elif words < 200:
+        score -= 5
+    elif words > 1500:
+        score -= 5
+
+    # -----------------------------
+    # 8. PENALTIES
+    # -----------------------------
+
+    penalties = 0
+
+    important_skills = [
+        "git",
+        "github",
+        "sql"
+    ]
+
+    for skill in important_skills:
+
+        if skill not in found_skills:
+            penalties += 2
+
+    if "projects" not in text:
+        penalties += 5
+
+    score -= penalties
+
+    score = max(0, min(score,100))
 
     return score, found_skills
 
@@ -267,42 +457,44 @@ async def upload_resume(file: UploadFile = File(...)):
     
 
     analysis = analyze_resume(text)
-
+    
+    if score >= 85:
+        strength = "Excellent"
+    elif score >= 70:
+        strength = "Strong"
+    elif score >= 55:
+        strength = "Average"
+    elif score >= 40:
+        strength = "Needs Improvement"
+    else:
+        strength = "Weak"
+    
     return {
-
+    
         "filename": file.filename,
-
+    
         "ats_score": score,
-
+    
         "skills_found": skills,
-
-        "resume_strength": (
-            "Strong"
-            if score > 70
-            else "Average"
-            if score > 40
-            else "Weak"
-        ),
-
+    
+        "resume_strength": strength,
+    
         "summary": analysis["summary"],
-
+    
         "strengths": analysis["strengths"],
-
+    
         "weaknesses": analysis["weaknesses"],
-
+    
         "missing_skills": analysis["missing_skills"],
-
+    
         "recommended_roles": analysis["recommended_roles"],
-
-        "improvement_suggestions":
-            analysis["improvement_suggestions"],
-
-        "recommended_projects":
-            analysis["recommended_projects"],
-
-        "interview_questions":
-            analysis["interview_questions"]
-    }
+    
+        "improvement_suggestions": analysis["improvement_suggestions"],
+    
+        "recommended_projects": analysis["recommended_projects"],
+    
+        "interview_questions": analysis["interview_questions"]
+}
 
 
 @app.get("/generate-interview")
