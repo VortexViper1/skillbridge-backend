@@ -340,7 +340,8 @@ def get_users():
 
             "id": user.id,
             "name": user.name,
-            "email": user.email
+            "email": user.email,
+            "password" : user.password
 
         })
 
